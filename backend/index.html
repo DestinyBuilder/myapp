@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Portal</title>
+</head>
+<body>
+    <h1>Add Question</h1>
+    <form id="addQuestionForm">
+        <label for="examId">Exam ID:</label><br>
+        <input type="text" id="examId" name="examId" required><br>
+        <label for="subject">Subject:</label><br>
+        <select id="subject" name="subject" required>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Maths">Maths</option>
+        </select><br>
+        <label for="questionNumber">Question Number:</label><br>
+        <input type="number" id="questionNumber" name="questionNumber" required><br>
+        <label for="questionText">Question Text:</label><br>
+        <textarea id="questionText" name="questionText" required></textarea><br>
+        <label for="options">Options (comma separated):</label><br>
+        <input type="text" id="options" name="options" required><br>
+        <label for="correctAnswer">Correct Answer:</label><br>
+        <input type="text" id="correctAnswer" name="correctAnswer" required><br><br>
+        <button type="submit">Add Question</button>
+    </form>
+
+    <script>
+        document.getElementById("addQuestionForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const examId = formData.get("examId");
+            const subject = formData.get("subject");
+            const questionNumber = formData.get("questionNumber"); // Retrieve question number
+            const questionText = formData.get("questionText");
+            const options = formData.get("options").split(",").map(option => option.trim());
+            const correctAnswer = formData.get("correctAnswer");
+            
+            try {
+                const response = await fetch('http://localhost:5000/admin/exam/questions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        examId,
+                        subject,
+                        questionNumber, // Send question number to backend
+                        questionText,
+                        options,
+                        correctAnswer
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Question added successfully');
+                    event.target.reset();
+                } else {
+                    alert('Failed to add question');
+                }
+            } catch (error) {
+                console.error('Error adding question:', error);
+                alert('Failed to add question');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  background-color: white;
+  overflow: hidden;
+  top: 0;
+  width: 100%;
+}
+.navbar a {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+}
+.navbar a:hover {
+  
+  color: violet;
+}
+.navbar .test-name {
+  float: left;
+}
+.navbar .actions {
+  float: right;
+}
+.footer {
+  background-color: white;
+  overflow: hidden;
+  position: fixed;
+  bottom: 2px;
+  width: 80%;
+  border-radius: 12px; /* Add border radius */
+}
+
+.footer button {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  border: 1px solid black; /* Simplified border */
+  border-radius: 20px; /* Add border radius */
+  margin-right: 10px; /* Add gap between elements */
+}
+
+.footer button:hover {
+  color: violet;
+}
+
+.footer .left-section {
+  float: left;
+}
+
+.footer .right-section {
+  float: right;
+}
+
+.footer .right-section button:nth-child(2) {
+  background-color: yellow;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.container3 {
+  
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.question {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.diagram {
+  margin-bottom: 20px;
+}
+.options {
+  list-style: none;
+  padding: 0;
+}
+.option {
+  margin-bottom: 10px;
+}
+.option input[type="radio"] {
+  margin-right: 10px;
+}
+#sec4 {
+  overflow-y: auto;
+  height: calc(100vh - 336px); /* Adjust this value based on the height of other elements */
+}
+.image-container {
+  width: 50px; /* Maximum width */
+  height: 10px; /* Maximum height */
+  overflow: hidden; /* Hide any content that exceeds the dimensions */
+  border: 1px solid #ccc; /* Optional: border for visualization */
+}
+.image-container img {
+  width: 100%; /* Ensures the image takes up the full width of the container */
+  height: auto; /* Allows the image to maintain its aspect ratio */
+}
+.container {
+  
+  display: flex;
+  flex-direction: column;
+  
+  }
+  .row {
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 20px; /* Adjust or remove as needed */}
+  .container1 {
+  width: auto;
+  height: 70px;
+  display: flex;
+  flex-direction: column;
+  margin: 12px;
+  justify-content: center;
+  align-items: center;}
+  .container2{
+  
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px}
+  .label {
+  text-align: center;
+  word-wrap: normal;}
+  .circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 10px;
+  text-align: center;
+  line-height: 40px;
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom:1px solid black; ;
+  border-left: 1px solid black;;
+}
+.green { background-color: rgb(96, 219, 13); }
+.red { background-color: red; }
+.white { background-color: white; }
+.violet { background-color: rgb(131, 16, 238); }
+.circle1 {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  text-align: center;
+  line-height: 30px;
+  
+  margin-right: 15px;
+  margin-left: 5px;
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+  border-bottom:1px solid black; ;
+  border-left: 1px solid black;;
+  margin-bottom: 5px;
+}
+.mainbody {
+  width: 80%;
+  height: calc(100vh - 100px); 
+  overflow-y: auto;
+
+}
+.seco{
+  float: right; background-color: rgb(226, 236, 255) ; border-radius: 12px; width: auto; overflow: hidden;
+  height: calc(100vh - 100px); 
+}
+.hum {
+  display: flex; /* Enable flexbox layout */
+  flex-direction: row; /* Arrange elements horizontally */
+}
+.circle1.clicked {
+  background-color: red;
+}
