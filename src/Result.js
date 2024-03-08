@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { BarChart, PieChart, XAxis, YAxis, Bar,Pie } from 'recharts';
 
 function Result({ examId, userId }) {
   const [resultData, setResultData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  examId="1" 
-  userId="hiino"
+  const [selectedSection, setSelectedSection] = useState("Physics");
+
   useEffect(() => {
     const fetchResult = async () => {
       try {
@@ -34,6 +35,10 @@ function Result({ examId, userId }) {
     fetchResult();
   }, [examId, userId]);
 
+  const handleSectionClick = (section) => {
+    setSelectedSection(section);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -46,40 +51,76 @@ function Result({ examId, userId }) {
     return <div>No result data available</div>;
   }
 
-  const { totalMarks, scores, response } = resultData;
+  const { scores, response } = resultData;
+  const totalmarks = scores["Physics"] + scores["Chemistry"] + 2 * scores["Maths"];
+  const sectionCorrectAnswers = response.map((sectionData) => {
+    const sectionName = sectionData[0];
+    const correctCount = sectionData[1].reduce((acc, question) => (acc + (question.correctAnswer === question.selectedAnswer)), 0);
+    const questionCount = sectionData[1].length;
+    return { name: sectionName, correct: correctCount, total: questionCount };
+  });
 
-  // Filter the response array to include only data for the provided examId and userId
-  const filteredResponse = response.filter(res => res.examId === examId && res.userId === userId);
-console.log(resultData)
   return (
     <div>
       <h2>Exam Result</h2>
-      <p>Total Marks: {totalMarks}</p>
+      <div>Total Marks: {totalmarks}</div>
       <div>
-        {scores && Object.entries(scores).map(([section, score]) => (
-          <p key={section}>Section: {section} - Score: {score}</p>
+        {Object.entries(scores).map(([section, score]) => (
+          <p key={section}>{section} - Score: {score}</p>
+        ))}
+      </div>
+      <div>
+        {Object.entries(scores).map(([section, score]) => (
+          <button key={section} onClick={() => handleSectionClick(section)}>{section}</button>
         ))}
       </div>
       <h3>User Responses</h3>
       <div>
-        {filteredResponse.map((res, index) => (
-          <div key={index}>
-            <p>User ID: {res.userId}</p>
-            <p>Answers:</p>
-            <div>
-              {res.answers && Object.entries(res.answers).map(([section, answers]) => (
-                <div key={section}>
-                  <p>Section: {section}</p>
-                  <ul>
-                    {answers.map((answer, index) => (
-                      <li key={index}>{answer}</li>
-                    ))}
-                  </ul>
-                </div>
+        {response.map((sectionData, index) => (
+          <div key={index} style={{ display: sectionData[0] === selectedSection ? 'block' : 'none' }}>
+            <p>Section: {sectionData[0]}</p>
+            <ul>
+              {sectionData[1].map((questionData, qIndex) => (
+                <li key={qIndex}>
+                  <p>Question Number: {questionData.questionNumber}</p>
+                  <p>Question Text: {questionData.questionText}</p>
+                  <p>Correct Answer: {questionData.correctAnswer}</p>
+                  <p>Selected Answer: {questionData.selectedAnswer}</p>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         ))}
+      </div>
+      <div>
+      <div>
+        <h3>Number of Correct Answers per Section (Bar Chart)</h3>
+        {sectionCorrectAnswers.length > 0 && (
+          <BarChart width={500} height={300} data={sectionCorrectAnswers}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Bar dataKey="correct" fill="#8884d8" />
+            <Bar dataKey="total" fill="#ccc" />
+          </BarChart>
+        )}
+      </div>
+      <div>
+        <h3>Total Marks Distribution (Pie Chart)</h3>
+        {scores && (
+          <PieChart width={400} height={300} >
+            <Pie
+              dataKey="value"
+              data={[
+                { name: 'Physics', value: scores['Physics'] },
+                { name: 'Chemistry', value: scores['Chemistry'] },
+                { name: 'Maths', value: 2 * scores['Maths'] },
+              ]}
+              fill="#8884d8"
+              label
+            />
+          </PieChart>
+        )}
+      </div>
       </div>
     </div>
   );

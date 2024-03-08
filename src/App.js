@@ -13,7 +13,7 @@ import Result from './Result';
 const USER_ID = "hiino";
 
 function App() {
-  const [selectedQuestion, setSelectedQuestion] = useState(0);
+  const [selectedQuestion, setSelectedQuestion] = useState("1");
   const [data, setData] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState("Physics");
   const [selectedOptionText, setSelectedOptionText] = useState("");

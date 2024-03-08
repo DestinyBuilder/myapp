@@ -180,59 +180,80 @@ app.post('/admin/exam/saveResponse', async (req, res) => {
     res.status(500).json({ error: 'Could not save responseo' });
   }
 });
-app.post("/admin/exam/getResult",async (req, res) => {
+examId="1"
+userId="hinno"
+app.post("/admin/exam/getResult", async (req, res) => {
   try {
+    // Set examId and userId temporarily
+    req.body.examId = "1";
+    req.body.userId = "hiino";
 
     const { examId, userId } = req.body;
-    console.log(examId)
-    console.log(">>>>>>>>>>>");
+    
+    
     // Find if there is an existing response for the given user ID
     const existingResponse = await Exam.findOne({ examId: examId, 'responses.userId': userId });
-    const correctAnswers = await Exam.findOne({examId:examId});
-    const dt = Object.entries(correctAnswers.questions)
-    // Update the existing response if it exists, otherwise create a new one
-    if (existingResponse && correctAnswers) {
-      const responseCandidate = existingResponse.responses.find((x)=>x.userId==userId).answers;
-      const t = Object.fromEntries(Object.entries(responseCandidate).map(([section, answers])=>{
-        return [section, Object.fromEntries(answers.map((x)=>{
-          return [x.questionNumber, x.selectedAnswer];
-        }))]
-      }))
-      
-      let scores = {}
-      const r = {scores, response: dt.map(([section, answers])=>{
-        return [section, answers.map((x)=>{
-          const selectedAnswer = t[section]["questionNumber"]
-          if(!(section in scores)){
-            scores[section] = 0;
-           
-          }   
-          console.log(x.correctAnswers)
-          
-          if(x.correctAnswer == selectedAnswer){            
-            score[section]++;
-          }
-          return {...x, selectedAnswer};
-        })]
-      })};
-      console.log(JSON.stringify(r))
-      res.status(200).json(r);
-    } else{
-      res.status(400).json({existingResponse: false})
+    const correctAnswers = await Exam.findOne({ examId: examId });
+
+    // Check if correctAnswers is null
+    if (!correctAnswers) {
+      return res.status(400).json({ error: 'No exam data found for the provided examId' });
     }
-    
+
+    // Update the existing response if it exists, otherwise return a 400 error
+    if (existingResponse) {
+      // Filter the response for the given userId
+      const userResponse = existingResponse.responses.find(response => response.userId === userId);
+      
+      // Calculate scores for each section
+      const scores = {};
+      const response = Object.entries(correctAnswers.questions).map(([section, questions]) => {
+        let sectionScore = 0;
+        const updatedQuestions = questions.map(question => {
+          
+
+       const userAnswer = userResponse.answers[section].find(answer => answer.questionNumber === question.questionNumber);
+
+
+
+          const selectedAnswer = userAnswer ? userAnswer.selectedAnswer : null;
+          if (question.correctAnswer === selectedAnswer) {
+            sectionScore++;
+            
+
+             // Increment section score if the answer is correct
+          }
+          return {
+            questionNumber: question.questionNumber,
+            questionText: question.questionText,
+            correctAnswer: question.correctAnswer,
+            selectedAnswer: selectedAnswer
+          };
+        });
+        scores[section] = sectionScore;
+        return [section, updatedQuestions];
+      });
+
+      res.status(200).json({ scores, response, userId });
+    } else {
+      res.status(400).json({ error: 'No response found for the provided userId and examId' });
+    }
   } catch (error) {
     console.error('Error fetching exam questions:', error);
     res.status(500).json({ error: 'Could not fetch exam questions', message: error.message });
   }
 });
+
+
+
+
 app.post('/admin/exam/getSavedResponse', async (req, res) => {
   try {
     const { examId, userId } = req.body;
 
     // Find if there is an existing response for the given user ID
     const existingResponse = await Exam.findOne({ examId: examId, 'responses.userId': userId });
-
+    
     // Update the existing response if it exists, otherwise create a new one
     if (existingResponse) {
       res.status(200).json(existingResponse.responses.find((x)=>x.userId==userId));
