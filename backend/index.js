@@ -3,23 +3,33 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser')
+
+const userController = require('./controller/user')
+
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
-mongoose.connect('mongodb://localhost:27017/examPortal', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
 
+
+
+
+const uri = "mongodb+srv://Ok945:(Onlyf0rme!@cluster0.xixq3wq.mongodb.net/?retryWrites=true&w=majority";
+
+
+mongoose.connect(uri);
 const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('Connected to the database');
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', function () {
+  console.log("Connected to MongoDB successfully");
 });
+
+
 
 // Schema for exam questions
 const ExamSchema = new mongoose.Schema({
@@ -109,6 +119,7 @@ app.get('/admin/exam/questions', async (req, res) => {
 
 app.post('/admin/exam/createNewResponse',async (req,res)=>{
   const { examId, userId } = req.body;
+  console.log("helo")
   console.log({examId})
   const startTime = new Date();
       const newResponse = await Exam.findOneAndUpdate(
@@ -180,8 +191,8 @@ app.post('/admin/exam/saveResponse', async (req, res) => {
     res.status(500).json({ error: 'Could not save responseo' });
   }
 });
-examId="1"
-userId="hinno"
+// examId="1"
+// userId="hinno"
 app.post("/admin/exam/getResult", async (req, res) => {
   try {
     // Set examId and userId temporarily
@@ -268,6 +279,12 @@ app.post('/admin/exam/getSavedResponse', async (req, res) => {
 });
 
 
+
+
+app.post('/signup', userController.signup)
+app.post('/signin', userController.signin)
+app.post('/submit-otp', userController.submitotp)
+app.post('/send-otp', userController.sendotp)
 
 
 

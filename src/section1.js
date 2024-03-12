@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function Section1({rem_time}) {
+function Section1({rem_time , auto_submit}) {
   const [timeLeft, setTimeLeft] = useState(rem_time);
   const [examStarted, setExamStarted] = useState(false);
   let timer;
@@ -24,7 +24,7 @@ function Section1({rem_time}) {
 
     if (examStarted) {
       const now = new Date();
-      const startTime = new Date(now.getTime() + (3 * 60 * 60 * 1000)); // Add 3 hours to current time
+      const startTime = new Date(now.getTime() + ( 60 * 1000)); // Add 3 hours to current time
       const timeDifference = startTime - now;
       
       timer = setInterval(() => {
@@ -34,7 +34,9 @@ function Section1({rem_time}) {
       setTimeout(() => {
         clearInterval(timer);
         setExamStarted(false);
+        auto_submit();
         setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
+
       }, timeDifference);
     }
 

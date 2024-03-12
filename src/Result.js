@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, PieChart, XAxis, YAxis, Bar,Pie } from 'recharts';
+import { BarChart, PieChart, XAxis, YAxis, Bar, Pie } from 'recharts';
+import Start from './Start';
+import './Result.css';
 
-function Result({ examId, userId }) {
+
+function Result({ examId, userId , onBackToStart}) {
   const [resultData, setResultData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedSection, setSelectedSection] = useState("Physics");
+
+
+  
+
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -39,6 +46,8 @@ function Result({ examId, userId }) {
     setSelectedSection(section);
   };
 
+
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -60,8 +69,17 @@ function Result({ examId, userId }) {
     return { name: sectionName, correct: correctCount, total: questionCount };
   });
 
+
+
+
+  const handleGoBackToStart = () => {
+    onBackToStart();
+    
+  };
+
+
   return (
-    <div>
+    <div className="result-container">
       <h2>Exam Result</h2>
       <div>Total Marks: {totalmarks}</div>
       <div>
@@ -93,35 +111,40 @@ function Result({ examId, userId }) {
         ))}
       </div>
       <div>
-      <div>
-        <h3>Number of Correct Answers per Section (Bar Chart)</h3>
-        {sectionCorrectAnswers.length > 0 && (
-          <BarChart width={500} height={300} data={sectionCorrectAnswers}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Bar dataKey="correct" fill="#8884d8" />
-            <Bar dataKey="total" fill="#ccc" />
-          </BarChart>
-        )}
+        <div>
+          <h3>Number of Correct Answers per Section (Bar Chart)</h3>
+          {sectionCorrectAnswers.length > 0 && (
+            <BarChart width={500} height={300} data={sectionCorrectAnswers}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Bar dataKey="correct" fill="#8884d8" />
+              <Bar dataKey="total" fill="#ccc" />
+            </BarChart>
+          )}
+        </div>
+        <div>
+          <h3>Total Marks Distribution (Pie Chart)</h3>
+          {scores && (
+            <PieChart width={400} height={300} >
+              <Pie
+                dataKey="value"
+                data={[
+                  { name: 'Physics', value: scores['Physics'] },
+                  { name: 'Chemistry', value: scores['Chemistry'] },
+                  { name: 'Maths', value: 2 * scores['Maths'] },
+                ]}
+                fill="#8884d8"
+                label
+              />
+            </PieChart>
+          )}
+        </div>
       </div>
-      <div>
-        <h3>Total Marks Distribution (Pie Chart)</h3>
-        {scores && (
-          <PieChart width={400} height={300} >
-            <Pie
-              dataKey="value"
-              data={[
-                { name: 'Physics', value: scores['Physics'] },
-                { name: 'Chemistry', value: scores['Chemistry'] },
-                { name: 'Maths', value: 2 * scores['Maths'] },
-              ]}
-              fill="#8884d8"
-              label
-            />
-          </PieChart>
-        )}
+
+      <div className="back-to-start" >
+      <button onClick={handleGoBackToStart}>Go Back to Start</button>
       </div>
-      </div>
+
     </div>
   );
 }
